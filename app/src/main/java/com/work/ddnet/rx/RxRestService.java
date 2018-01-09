@@ -21,7 +21,6 @@ import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
- *
  * @author Ting
  * @date 2017/11/15
  */
@@ -29,6 +28,9 @@ import retrofit2.http.Url;
 public interface RxRestService {
     @GET
     Observable<String> get(@Url String url, @QueryMap Map<String, Object> params);
+
+    @GET
+    Observable<String> get(@Url String url);
 
     @FormUrlEncoded
     @POST

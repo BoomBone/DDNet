@@ -23,21 +23,16 @@ public class RxRestClient {
     private static final WeakHashMap<String, Object> PARAMS = RestCreator.getParams();
     private final String URL;
     private final RequestBody BODY;
-    private final String STYLE;
-    private final Context CONTEXT;
     private final File FILE;
+    private final RxRestService SERVICE = RestCreator.getRxRestService();
 
     public RxRestClient(String url,
                         WeakHashMap<String, Object> params,
                         RequestBody body,
-                        Context context,
-                        String style,
                         File file) {
         PARAMS.putAll(params);
         this.URL = url;
         this.BODY = body;
-        this.STYLE = style;
-        this.CONTEXT = context;
         this.FILE = file;
     }
 
@@ -45,78 +40,57 @@ public class RxRestClient {
         return new RxRestClientBuilder();
     }
 
-    private Observable<String> request(String method) {
-        final RxRestService service = RestCreator.getRxRestService();
-        Observable<String> observable = null;
-
-        if (STYLE != null) {
-//            OrangeLoader.showLoading(CONTEXT, STYLE);
-            //TODO 加载UI
-        }
-        switch (method) {
-            case I.HttpMethod.GET:
-                observable = service.get(URL, PARAMS);
-                break;
-            case I.HttpMethod.POST:
-                observable = service.post(URL, PARAMS);
-                break;
-            case I.HttpMethod.PUT:
-                observable = service.put(URL, PARAMS);
-                break;
-            case I.HttpMethod.DELETE:
-                observable = service.delete(URL, PARAMS);
-                break;
-            case I.HttpMethod.POST_RAW:
-                observable = service.postRaw(URL, BODY);
-                break;
-            case I.HttpMethod.PUT_RAW:
-                observable = service.putRaw(URL, BODY);
-                break;
-            case I.HttpMethod.UPLOAD:
-                final RequestBody requestBody =
-                        RequestBody.create(MediaType.parse(MultipartBody.FORM.toString()), FILE);
-                final MultipartBody.Part body =
-                        MultipartBody.Part.createFormData("file", FILE.getName(), requestBody);
-                observable = service.upload(URL, body);
-                break;
-            default:
-                break;
-        }
-        return observable;
-    }
 
     public final Observable<String> get() {
-        return request(I.HttpMethod.GET);
-    }
-
-    public final Observable<String> put() {
-        if (BODY == null) {
-            return request(I.HttpMethod.PUT);
-        } else {
-            if (!PARAMS.isEmpty()) {
-                throw new RuntimeException("params must be null!");
-            }
-            return request(I.HttpMethod.PUT_RAW);
+        if (PARAMS.size()==0){
+            Observable<String> observable = SERVICE.get(URL);
+            return observable;
+        }else{
+            Observable<String> observable = SERVICE.get(URL, PARAMS);
+            return observable;
         }
     }
 
     public final Observable<String> post() {
         if (BODY == null) {
-            return request(I.HttpMethod.POST);
+            Observable<String> observable = SERVICE.post(URL, PARAMS);
+            return observable;
         } else {
             if (!PARAMS.isEmpty()) {
                 throw new RuntimeException("params must be null!");
+            }else{
+                Observable<String> observable = SERVICE.putRaw(URL, BODY);
+                return observable;
             }
-            return request(I.HttpMethod.POST_RAW);
+        }
+    }
+
+    public final Observable<String> put() {
+        if (BODY == null) {
+            Observable<String> observable = SERVICE.put(URL, PARAMS);;
+            return observable;
+        } else {
+            if (!PARAMS.isEmpty()) {
+                throw new RuntimeException("params must be null!");
+            }else{
+                Observable<String> observable = SERVICE.putRaw(URL, BODY);
+                return observable;
+            }
         }
     }
 
     public final Observable<String> delete() {
-        return request(I.HttpMethod.DELETE);
+        Observable<String> observable = SERVICE.delete(URL, PARAMS);
+        return observable;
     }
 
     public final Observable<String> upload() {
-        return request(I.HttpMethod.UPLOAD);
+        final RequestBody requestBody =
+                RequestBody.create(MediaType.parse(MultipartBody.FORM.toString()), FILE);
+        final MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", FILE.getName(), requestBody);
+        Observable<String> observable = SERVICE.upload(URL, body);
+        return observable;
     }
 
     public final Observable<ResponseBody> download() {

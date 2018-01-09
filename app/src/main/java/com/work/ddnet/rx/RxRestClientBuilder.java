@@ -20,8 +20,6 @@ public class RxRestClientBuilder {
     private static final WeakHashMap<String, Object> PARAMS = RestCreator.getParams();
     private String mUrl = null;
     private RequestBody mBody = null;
-    private String mStyle = null;
-    private Context mContext = null;
     private File mFile = null;
 
 
@@ -56,7 +54,6 @@ public class RxRestClientBuilder {
     }
 
     public final RxRestClient build() {
-        return new RxRestClient(mUrl, PARAMS, mBody, mContext
-                , mStyle, mFile);
+        return new RxRestClient(mUrl, PARAMS, mBody, mFile);
     }
 }
