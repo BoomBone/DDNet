@@ -31,7 +31,7 @@ interface I {
 
     interface BaseUrl {
         companion object {
-            val URL = "http://news.baidu.com/"
+            val URL = "http://127.0.0.1/"
         }
     }
 }

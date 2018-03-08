@@ -2,9 +2,12 @@ package com.work.ddnet
 
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.work.base.ext.execute
 
 import com.work.ddnet.rx.RxRestClient
 
@@ -25,27 +28,25 @@ class MyActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
+        val time0 = SystemClock.currentThreadTimeMillis()
+        Log.e("time", time0.toString())
         RxRestClient.builder()
                 .url("http://news.baidu.com/")
                 .build()
                 .get()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<String> {
-                    override fun onSubscribe(@NonNull d: Disposable) {
+                .execute(object : Observer<String> {
+                    override fun onSubscribe(d: Disposable) {
 
                     }
 
-                    override fun onNext(@NonNull s: String) {
-                        Toast.makeText(this@MyActivity, s, Toast.LENGTH_SHORT).show()
-                    }
-
-                    override fun onError(@NonNull e: Throwable) {
-
+                    override fun onError(e: Throwable) {
                     }
 
                     override fun onComplete() {
+                    }
 
+                    override fun onNext(t: String) {
+                        Log.e("main","网络请求成功")
                     }
                 })
     }
