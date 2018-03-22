@@ -16,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.toast
 
 /**
  * Created by Ting on 2018/1/5.
@@ -47,6 +48,7 @@ class MyActivity : AppCompatActivity() {
 
                     override fun onNext(t: String) {
                         Log.e("main","网络请求成功")
+                        toast("网络请求成功")
                     }
                 })
     }
