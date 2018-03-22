@@ -1,4 +1,4 @@
-# kotlin网络请求
+# Kotlin Retrofit2+Rxjava2 网络请求封装
 简单使用方法示例
 ```
  RxRestClient.builder()
